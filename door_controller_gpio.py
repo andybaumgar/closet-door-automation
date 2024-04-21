@@ -25,7 +25,7 @@ def move(speed_rpm=60, direction=0, duration_seconds=2):
     acceleration_duration = duration_seconds / 2
     acceleration_steps = int(acceleration_duration / segment_duration)
     pulse_frequency_increment = pulse_frequency / acceleration_steps
-    current_frequency = 0
+    current_frequency = 1
 
     # PWM Setup
     pwm = GPIO.PWM(step_pin, current_frequency)
