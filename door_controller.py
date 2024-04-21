@@ -32,14 +32,14 @@ def move(speed_rpm=60, direction=0, duration_seconds=2):
     print(f"Acceleration steps: {acceleration_steps}")
 
     for i in range(int(acceleration_steps)):
-        pi.set_PWM_frequency(step_pin, current_frequency)
+        pi.set_PWM_frequency(step_pin, int(current_frequency))
         pi.set_PWM_dutycycle(step_pin, 128)
         current_frequency += pulse_frequency_increment
         print(f"Frequency: {current_frequency}")
         time.sleep(segment_duration)  # 50% duty cycle
 
     for i in range(int(acceleration_steps)):
-        pi.set_PWM_frequency(step_pin, current_frequency)
+        pi.set_PWM_frequency(step_pin, int(current_frequency))
         pi.set_PWM_dutycycle(step_pin, 128)
         current_frequency -= pulse_frequency_increment
         print(f"Frequency: {current_frequency}")
