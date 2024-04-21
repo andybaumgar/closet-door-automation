@@ -23,7 +23,7 @@ def move(speed_rpm=60, direction=0, duration_seconds=2):
 
     pulse_frequency = int(steps_per_second)
 
-    segment_duration = 0.05
+    segment_duration = 0.1
     acceleration_duration = duration_seconds / 2
     acceleration_steps = acceleration_duration / segment_duration
     pulse_frequency_increment = pulse_frequency / acceleration_steps
