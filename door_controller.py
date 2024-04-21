@@ -15,23 +15,35 @@ def move(speed_rpm=60, direction=0, duration_seconds=2):
     if not pi.connected:
         exit()
 
-    # Set up GPIO pins
     pi.set_mode(step_pin, pigpio.OUTPUT)
     pi.set_mode(dir_pin, pigpio.OUTPUT)
 
-    # Set direction (1 for clockwise, 0 for counterclockwise)
     pi.write(dir_pin, direction)
     time.sleep(0.1)
 
-    # Calculate pulse frequency based on desired speed
     pulse_frequency = int(steps_per_second)
 
-    # Generate pulses
-    pi.set_PWM_frequency(step_pin, pulse_frequency)
-    pi.set_PWM_dutycycle(step_pin, 128)  # 50% duty cycle
+    segment_duration = 0.05
+    acceleration_duration = duration_seconds / 2
+    acceleration_steps = acceleration_duration / segment_duration
+    pulse_frequency_increment = pulse_frequency / acceleration_steps
+    current_frequency = 0
 
-    # Run motor for 5 seconds
-    time.sleep(duration_seconds)
+    print(f"Acceleration steps: {acceleration_steps}")
+
+    for i in range(int(acceleration_steps)):
+        pi.set_PWM_frequency(step_pin, current_frequency)
+        pi.set_PWM_dutycycle(step_pin, 128)
+        current_frequency += pulse_frequency_increment
+        print(f"Frequency: {current_frequency}")
+        time.sleep(segment_duration)  # 50% duty cycle
+
+    for i in range(int(acceleration_steps)):
+        pi.set_PWM_frequency(step_pin, current_frequency)
+        pi.set_PWM_dutycycle(step_pin, 128)
+        current_frequency -= pulse_frequency_increment
+        print(f"Frequency: {current_frequency}")
+        time.sleep(segment_duration)  # 50% duty cycle
 
     # Stop motor
     pi.set_PWM_dutycycle(step_pin, 0)  # Stop sending pulses
