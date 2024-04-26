@@ -19,7 +19,7 @@ def pulse():
 
     time.sleep(20)
 
-    print(f"Acceleration steps: {acceleration_steps}")
+    # print(f"Acceleration steps: {acceleration_steps}")
 
     # for i in range(acceleration_steps):
     #     # pwm.ChangeFrequency(int(current_frequency))
