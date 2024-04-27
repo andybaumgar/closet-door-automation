@@ -15,7 +15,7 @@ def pulse():
     print(f"pulse_frequency: {pulse_frequency}")
 
     pwm = GPIO.PWM(step_pin, pulse_frequency)
-    pwm.start(50)  # start PWM at 50% duty cycle
+    pwm.start(10)  # start PWM at 50% duty cycle
 
     time.sleep(20)
 
