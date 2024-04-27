@@ -21,7 +21,7 @@ def pulse():
 
     pi.set_PWM_frequency(step_pin, pulse_frequency)
 
-    time.sleep(20)
+    time.sleep(10)
 
     pi.set_PWM_dutycycle(step_pin, 0)  # Stop sending pulses
     pi.stop()
