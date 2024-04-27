@@ -7,7 +7,7 @@ def move(speed_rpm=60, direction=0, duration_seconds=2):
     # Constants
     step_pin = 13  # GPIO pin for the STEP signal
     dir_pin = 5  # GPIO pin for the DIRECTION signal
-    single_revolution_steps = 200
+    single_revolution_steps = 100
     steps_per_second = speed_rpm / 60 * single_revolution_steps
 
     # Setup
