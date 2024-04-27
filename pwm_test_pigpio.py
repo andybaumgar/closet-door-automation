@@ -11,7 +11,7 @@ def pulse():
 
     k_steps_per_second = input("Enter frequency in KHz: ")
 
-    step_pin = 27
+    step_pin = 13
     steps_per_second = int(k_steps_per_second) * 1000
     pulse_frequency = int(steps_per_second)
 
