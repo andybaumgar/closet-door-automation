@@ -5,7 +5,7 @@ import argparse
 
 def pulse():
     step_pin = 27
-    steps_per_second = 4000
+    steps_per_second = 8000
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(step_pin, GPIO.OUT)
@@ -15,7 +15,7 @@ def pulse():
     print(f"pulse_frequency: {pulse_frequency}")
 
     pwm = GPIO.PWM(step_pin, pulse_frequency)
-    pwm.start(10)  # start PWM at 50% duty cycle
+    pwm.start(50)  # start PWM at 50% duty cycle
 
     time.sleep(20)
 
