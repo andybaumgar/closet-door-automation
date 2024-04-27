@@ -4,7 +4,7 @@ import argparse
 
 
 def pulse():
-    step_pin = 9
+    step_pin = 3
     steps_per_second = 4000
 
     GPIO.setmode(GPIO.BCM)
