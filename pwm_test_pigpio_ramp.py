@@ -5,9 +5,9 @@ import time
 import pigpio
 
 start_frequency = 1
-end_frequency = 10000
-start_interval = 5000
-end_interval = 100
+end_frequency = 64000
+start_interval = 1 / (start_frequency * 0.5)
+end_interval = 1 / (end_frequency * 0.5)
 STEP = 100
 
 GPIO = 27
