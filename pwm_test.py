@@ -20,7 +20,7 @@ def pulse():
     pwm = GPIO.PWM(step_pin, pulse_frequency)
     pwm.start(50)  # start PWM at 50% duty cycle
 
-    time.sleep(20)
+    time.sleep(10)
 
     # print(f"Acceleration steps: {acceleration_steps}")
 
