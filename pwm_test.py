@@ -4,8 +4,11 @@ import argparse
 
 
 def pulse():
+
+    k_steps_per_second = input("Enter frequency in KHz: ")
+
     step_pin = 27
-    steps_per_second = 16000
+    steps_per_second = k_steps_per_second * 1000
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(step_pin, GPIO.OUT)
