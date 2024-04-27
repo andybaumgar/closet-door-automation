@@ -5,9 +5,9 @@ import argparse
 
 def move(speed_rpm=60, direction=0, duration_seconds=2):
     # Constants
-    step_pin = 9  # GPIO pin for the STEP signal
-    dir_pin = 22  # GPIO pin for the DIRECTION signal
-    single_revolution_steps = 4000
+    step_pin = 13  # GPIO pin for the STEP signal
+    dir_pin = 5  # GPIO pin for the DIRECTION signal
+    single_revolution_steps = 200
     steps_per_second = speed_rpm / 60 * single_revolution_steps
 
     # Setup
