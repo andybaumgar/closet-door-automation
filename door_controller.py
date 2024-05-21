@@ -1,70 +1,94 @@
-import pigpio
+import RPi.GPIO as GPIO
 import time
-import argparse
+
+SPEED_RPM = 60
+CLOCKWISE_DIRECTION = False
+DURATION_SECONDS = 2
+
+BUTTON_PIN = 17  # set button pin
 
 
-def move(speed_rpm=60, direction=0, duration_seconds=2):
-    # Constants
-    step_pin = 9  # GPIO pin for the STEP signal
-    dir_pin = 22  # GPIO pin for the DIRECTION signal
-    single_revolution_steps = 4000
+def move(speed_rpm=60, clockwise_direction=False, duration_seconds=2):
+    step_pin = 13  # GPIO pin for the STEP signal
+    dir_pin = 5  # GPIO pin for the DIRECTION signal
+    single_revolution_steps = 100
     steps_per_second = speed_rpm / 60 * single_revolution_steps
 
     # Setup
-    pi = pigpio.pi()
-    if not pi.connected:
-        exit()
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(step_pin, GPIO.OUT)
+    GPIO.setup(dir_pin, GPIO.OUT)
 
-    pi.set_mode(step_pin, pigpio.OUTPUT)
-    pi.set_mode(dir_pin, pigpio.OUTPUT)
-
-    pi.write(dir_pin, direction)
+    GPIO.output(dir_pin, GPIO.HIGH if clockwise_direction else GPIO.LOW)
     time.sleep(0.1)
 
     pulse_frequency = int(steps_per_second)
 
     segment_duration = 0.1
     acceleration_duration = duration_seconds / 2
-    acceleration_steps = acceleration_duration / segment_duration
+    acceleration_steps = int(acceleration_duration / segment_duration)
     pulse_frequency_increment = pulse_frequency / acceleration_steps
-    current_frequency = 0
+    current_frequency = 1
 
-    pi.set_PWM_dutycycle(step_pin, 128)
+    # PWM Setup
+    pwm = GPIO.PWM(step_pin, current_frequency)
+    pwm.start(50)  # start PWM at 50% duty cycle
 
     print(f"Acceleration steps: {acceleration_steps}")
 
-    for i in range(int(acceleration_steps)):
-        pi.set_PWM_frequency(step_pin, int(current_frequency))
+    for i in range(acceleration_steps):
+        pwm.ChangeFrequency(int(current_frequency))
         current_frequency += pulse_frequency_increment
-        time.sleep(segment_duration)  # 50% duty cycle
+        time.sleep(segment_duration)
 
-    for i in range(int(acceleration_steps)):
-        pi.set_PWM_frequency(step_pin, int(current_frequency))
+    for i in range(acceleration_steps):
+        pwm.ChangeFrequency(int(current_frequency))
         current_frequency -= pulse_frequency_increment
-        time.sleep(segment_duration)  # 50% duty cycle
+        time.sleep(segment_duration)
 
     # Stop motor
-    pi.set_PWM_dutycycle(step_pin, 0)  # Stop sending pulses
+    pwm.stop()  # Stop sending pulses
 
     # Cleanup
-    pi.stop()
+    GPIO.cleanup()
 
 
-def main(args):
-    move(
-        speed_rpm=args.speed_rpm,
-        direction=args.direction,
-        duration_seconds=args.duration_seconds,
-    )
+def setup():
+    GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Script to move servo motor.")
+def button_clicked():
+    return GPIO.input(BUTTON_PIN)
 
-    parser.add_argument("speed_rpm", type=float)
-    parser.add_argument("direction", type=int)
-    parser.add_argument("duration_seconds", type=float)
 
-    args = parser.parse_args()
+def print_door_status(door_closed):
+    print("Door closed" if door_closed else "Door opened")
 
-    main(args)
+
+def run_door():
+    setup()
+
+    door_closed = True
+    print_door_status(door_closed)
+
+    current_direction = CLOCKWISE_DIRECTION
+
+    if button_clicked():
+        print("Button pressed while starting. Please check the wiring.  Exiting.")
+        return
+
+    while True:
+        if button_clicked():
+            move(
+                speed_rpm=SPEED_RPM,
+                clockwise_direction=current_direction,
+                duration_seconds=DURATION_SECONDS,
+            )
+
+            door_closed = not door_closed
+            print_door_status(door_closed)
+
+            current_direction = not current_direction
+
+
+run_door()
